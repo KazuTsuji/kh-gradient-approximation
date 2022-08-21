@@ -51,21 +51,21 @@ elseif functype==2;
     mu_norm=val*density_const^2
 elseif functype==3
     if dim==2
-        mu_norm=load('matern32_2d_val.mat').matern32_2dval;
+        mu_norm=load('IntegralMatFiles/matern32_2d_val.mat').matern32_2dval;
     elseif dim==3
-        mu_norm=load('matern32_3d_val.mat').matern32_3dval;
+        mu_norm=load('IntegralMatFiles/matern32_3d_val.mat').matern32_3dval;
     end
 elseif functype==4
     if dim==2
-        mu_norm=load('matern52_2d_integvalue.mat').value2d;
+        mu_norm=load('IntegralMatFiles/matern52_2d_integvalue.mat').value2d;
     elseif dim==3
-        mu_norm=load('matern52_3d.mat').value;
+        mu_norm=load('IntegralMatFiles/matern52_3d.mat').value;
     end
 elseif functype==5
     if dim==2
-        mu_norm=load('exp_2d.mat').value;
+        mu_norm=load('IntegralMatFiles/exp_2d.mat').value;
     elseif dim==3
-        mu_norm=load('exp_3d.mat').value;
+        mu_norm=load('IntegralMatFiles/exp_3d.mat').value;
     end
 end
 

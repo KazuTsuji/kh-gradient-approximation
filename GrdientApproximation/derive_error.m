@@ -45,24 +45,24 @@ function error= derive_error(m,c,ind_num,dim,p,epsilon,c_var,mean,var,mu,partion
         elseif functype==3
             if dim==2
                 %error=load('matern32_2d.mat').value;
-                error=load('matern32_2d_val.mat').matern32_2dval;
+                error=load('IntegralMatFiles/matern32_2d_val.mat').matern32_2dval;
             elseif dim==3
-                error=load('matern32_3d_val.mat').matern32_3dval;
+                error=load('IntegralMatFiles/matern32_3d_val.mat').matern32_3dval;
                 %error=load('matern32_3d.mat').value;
             end
         elseif functype==4
             if dim==2
-                error=load('matern52_2d_integvalue.mat').value2d;
+                error=load('IntegralMatFiles/matern52_2d_integvalue.mat').value2d;
                 %error=load('matern52_2d.mat').value;
                 %error=load('matern52_2d_qmc.mat').v3;
             elseif dim==3
-                error=load('matern52_3d.mat').value;
+                error=load('IntegralMatFiles/matern52_3d.mat').value;
             end
         elseif functype==5
             if dim==2
-                error=load('exp_2d.mat').value;
+                error=load('IntegralMatFiles/exp_2d.mat').value;
             elseif dim==3
-                error=load('exp_3d.mat').value;
+                error=load('IntegralMatFiles/exp_3d.mat').value;
             end
         elseif  functype==6
             error=4/3;
