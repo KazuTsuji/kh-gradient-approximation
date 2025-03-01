@@ -1,6 +1,6 @@
 %kernel herding with equal weights
 
-function output = monte_carlo(m,epsilon,dim,functype,option)
+function output = GaussLegendre(m,epsilon,dim,functype,option)
 
 
 if functype==1
@@ -17,28 +17,37 @@ elseif functype==5
     d_function = @(x,y,epsilon) exp(-epsilon*norm(x-y));
 else
     'error_arises'
-    output =[]
     return
 end
 
-error_ar=[];
-number_of_points=[];
-
-%syms x;
-
-
-p=zeros(m,dim);%array of nodes
-c=[];%array of weights
-
-nodes=[];
-error_nodes=[];
-iteration_t=[];
-error_t=[];
-
 density_const= (1/ (erf(1)*sqrt(pi)) )^dim;
 
-mu_ar=zeros(1,m);
+% Calculate Gauss Legendre nodes
+[gl_node, gl_weight] = Gaulegwt(-1,1,m)
 
+nodes=zeros(m^dim,dim);%array of nodes
+quad_coeff=zeros(m^dim, 1);% array of weights
+
+for ii=1:m^dim
+    indexes = func_index(ii-1, m, dim)
+    each_node = []
+  
+    factor =0.5^dim
+
+    for jj=1:dim
+        each_node =[each_node, gl_node(indexes(jj))]
+        factor = factor* gl_weight(indexes(jj))
+    end
+    nodes(ii,:) = each_node
+    quad_coeff(ii,:) = factor
+end
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%mu_normの計算
 if functype==1;
    val=1;
    for dd=1:dim
@@ -71,38 +80,18 @@ elseif functype==5
     end
 end
 
-tstart=tic;
-t_calc=0.0;
-time=[];
 
-mu_val_total=0;
-quad_total=0;
 
-for ii=1:m
-    if functype==1 || functype==2
-        flag=false;
-        while flag==false
-            point=randn(1,dim);
-            ran_flag=true;
-            for jj=1:dim
-                if (point(jj) >1 )|| (point(jj)<-1 )
-                    ran_flag=false;
-                end
-            end
-            if ran_flag==true
-                flag=true;
-            end
-        end
-    elseif functype==3 || functype==4 || functype==5
-        point=2*rand(1,dim)-1;
-    end
 
-    p(ii,:)=point;
-     
+% mu_(x_i)の計算
+
+mu_ar = zeros(m^dim, 1);
+
+for ii=1:m^dim
     if functype == 1
         val = 1;
         for kk = 1:dim
-            f = @(x) exp(-x.^2) .* exp(-epsilon * abs(x - point(kk)));
+            f = @(x) exp(-x.^2) .* exp(-epsilon * abs(x - nodes(ii,kk)));
             val = val * integral(f, -1, 1);
         end
         mu_ar(ii) = val * density_const;
@@ -110,13 +99,13 @@ for ii=1:m
     elseif functype == 2
         val = 1;
         for kk = 1:dim
-            f = @(x) exp(-x.^2) .* exp(-epsilon * (x - point(kk)).^2);
+            f = @(x) exp(-x.^2) .* exp(-epsilon * (x - nodes(ii,kk)).^2);
             val = val * integral(f, -1, 1);
         end
         mu_ar(ii) = val * density_const;
-
+    
     elseif functype==3;
-        p_ar=point;
+        p_ar=nodes(ii,:);
         if dim==2
             ff=@(x,y)(1+sqrt((x-p_ar(1)).^2+(y-p_ar(2)).^2 ) ) .*exp(-sqrt( (x-p_ar(1)).^2+(y-p_ar(2)).^2 ));
             mu_ar(ii)=(0.5)^dim *integral2(ff,-1,1,-1,1);
@@ -126,10 +115,9 @@ for ii=1:m
         end
     
     elseif functype==4;
-        p_ar=point;
+        p_ar=nodes(ii,:);
         if dim==2
             ff=@(x,y)(1+sqrt((x-p_ar(1)).^2+(y-p_ar(2)).^2 )+((x-p_ar(1)).^2+(y-p_ar(2)).^2 )/3 ) .*exp(-sqrt( (x-p_ar(1)).^2+(y-p_ar(2)).^2 ));
-            mu
             mu_ar(ii)=(0.5)^dim *integral2(ff,-1,1,-1,1);
         elseif dim==3
             ff=@(x,y,z)(1+sqrt((x-p_ar(1)).^2+(y-p_ar(2)).^2+(z-p_ar(3)).^2 )+((x-p_ar(1)).^2+(y-p_ar(2)).^2+(z-p_ar(3)).^2 )/3 ) .*exp(-sqrt((x-p_ar(1)).^2+(y-p_ar(2)).^2+(z-p_ar(3)).^2));
@@ -137,7 +125,7 @@ for ii=1:m
         end
         
     elseif functype==5;
-        p_ar=point;
+        p_ar=nodes(ii,:);
         if dim==2
             ff=@(x,y) exp(-epsilon*sqrt( (x-p_ar(1)).^2+(y-p_ar(2)).^2 ));
             mu_ar(ii)=(0.5)^dim *integral2(ff,-1,1,-1,1);
@@ -146,42 +134,29 @@ for ii=1:m
             mu_ar(ii)=(0.5)^dim *integral3(ff,-1,1,-1,1,-1,1);
         end
     end
-
-    mu_val_total=mu_val_total+mu_ar(ii);
-    quad_total=quad_total+d_function(p(ii,:),p(ii,:),epsilon);
-    if ii>1
-        for jj=1:ii-1
-            quad_total= quad_total+ 2*d_function(p(jj,:),p(ii,:),epsilon);
-        end
-    end
-
-    error_value=mu_norm - 2* 1/ii * mu_val_total + (1/ii)^2 *quad_total;
-    error_value=sqrt(error_value);
-
-    nodes=[nodes,ii];
-    error_nodes=[error_nodes,error_value];
-    
-    iteration_t=[iteration_t,i];
-    error_t=[error_t, error_value];
-    
-    time=[time,double((toc(tstart)-t_calc))];
-    tic
-    t_calc=double(t_calc)+double(toc);
-    
-    error_ar=[error_ar,error_value];
-    number_of_points=[number_of_points,ii];
-
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if option==1
-    output=[nodes,error_nodes];
-elseif option==2
-    output=[iteration_t,error_t];
-elseif option==3
-    output=[time,error_t];
-elseif option==4
-    output=[number_of_points, error_ar];
+mu_val_total=0;
+quad_total=0;
+    
+%二次形式部分の計算
+
+for ii=1: m^dim
+    mu_val_total=mu_val_total+ quad_coeff(ii)* mu_ar(ii);
+    for jj=1:m^dim
+        quad_total=quad_total+ quad_coeff(ii) * quad_coeff(jj)* d_function(nodes(ii,:),nodes(jj,:),epsilon);
+    end
+end
+
+error_value=mu_norm - 2*  mu_val_total + quad_total;
+error_value=sqrt(error_value);
+
+
+
+if option==4
+    output= error_value;
 end
 
 end

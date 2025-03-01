@@ -24,7 +24,7 @@ else
     'error_arises'
 end
 
-syms x;
+%syms x;
 
 error_ar=[];
 number_of_points=[];

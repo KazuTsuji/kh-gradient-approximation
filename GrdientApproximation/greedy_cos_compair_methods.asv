@@ -8,13 +8,13 @@ dim=2;
 meanarr=[[0,0]];
 partion=[1];
 var=[1];
-delta=1e-4;
+delta=1e-5;
 K=30;
 T=35;
 functype=2;
 option=4;
 maxtime=600;
-maxnodes=100;
+maxnodes=120;
 %}
 
 % Matern3/2 dim=2
@@ -30,7 +30,7 @@ K=20;
 T=35;
 functype=3;
 option=4;
-maxtime=14400;
+maxtime=60;
 maxnodes=200;
 %}
 
@@ -47,24 +47,10 @@ K=20;
 T=35;
 functype=6;
 option=4;
-maxtime=14400;
-maxnodes=200;
+maxtime=300;
+maxnodes=300;
 %}
-%Gaussian dim =3 
-epsilon=1;
-n=20;
-dim=3;
-meanarr=[[0,0,0]];
-partion=[1];
-var=[1];
-delta=1e-4;
-K=30;
-T=35;
-functype=2;
-option=4;
-maxtime=3600;
-maxnodes=130;
-
+%
 %Matern3/2 dim=3
 %{
 epsilon=1;
@@ -79,11 +65,9 @@ partion=[1];
 var=[1];
 delta=0.0001;
 K=20;
-T=35;
+T=18;
 functype=3;
 option=4;
-maxtime=14400;
-maxnodes=200;
 %}
 
 points =linspace(-1,1,n) ;
@@ -172,7 +156,6 @@ end
 order_1=[];
 order_2=[];
 num_nodes=[];
-
 
 output_monte_carlo= monte_carlo(maxnodes,epsilon,dim,functype,option);
 len_monte_carlo=  int64(length(output_monte_carlo)/2);
@@ -337,17 +320,12 @@ sphere_nodes =[];
 sphere_error =[];
 
 fileNameList = dir('SphereDesign/*.txt');
-for ii = 1: length(fileNameList);
-    barSplit = split(fileNameList(ii).name,"_");
-    dotSplit = split(barSplit(2),".");
-    numNodesStr = dotSplit(1);
-    numNodes =  str2double(numNodesStr);
-    if(numNodes > maxnodes)
-        break
-    else
-        sphere_nodes = [sphere_nodes, numNodes];
-        sphere_error = [sphere_error, SphericalDesign(fileNameList(ii).name, option)];
-    end
+for ii = 1: length(fileNameList)
+    barSplit = split(fileNameList(ii).name,"_")
+    dotSplit = split(barSplit(2),".")
+    numNodesStr = dotSplit(1)
+    numNodes =  str2double(numNodesStr)
+    if(numNodes )
 end
 
 

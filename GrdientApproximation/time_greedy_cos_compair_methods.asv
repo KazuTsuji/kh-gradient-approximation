@@ -1,7 +1,7 @@
 %compair the four methods on the convergence speed of the worst case errors for the number of nodes when dim=2
 
 %dim=2 Sphere case
-
+%{
 epsilon=1;
 n=80;
 dim=2;
@@ -21,9 +21,8 @@ max_time_copy=maxtime;
 maxnodes=30000;
 max_nodes_copy=maxnodes;
 time_num=10;
-
+%}
 %Gaussian dim =3 
-%{
 epsilon=1;
 n=20;
 dim=3;
@@ -40,7 +39,7 @@ max_time_copy=maxtime;
 maxnodes=30000;
 max_nodes_copy=maxnodes;
 time_num=10;
-%}
+
 
 points =linspace(-1,1,n) ;
  
@@ -404,12 +403,12 @@ for tt=1:time_num
         SBQ_ave=SBQ_err;
         SBQ_nodes_ave=SBQ_nodes;
     else
-         if(length(SBQ_err) > length(SBQ_ave))
-            SBQ_err = SBQ_err(1:length(SBQ_ave));
-            SBQ_nodes = SBQ_nodes(1:length(SBQ_ave));
-        elseif(length(SBQ_err) < length(SBQ_ave))
-            SBQ_ave = SBQ_ave(1:length(SBQ_err));
-            SBQ_nodes_ave = SBQ_nodes_ave(1:length(SBQ_err));
+         if(length(SBQ) > length(FC_ave))
+            FC = FC(1:length(FC_ave));
+            FC_nodes = FC_nodes(1:length(FC_ave));
+        elseif(length(FC) < length(FC_ave))
+            FC_ave = FC_ave(1:length(FC));
+            FC_nodes_ave = FC_nodes_ave(1:length(FC));
         end
         SBQ_ave=SBQ_ave+SBQ_err;
         SBQ_nodes_ave=SBQ_nodes_ave+SBQ_nodes;
@@ -419,3 +418,61 @@ SBQ_err=SBQ_ave/time_num;
 SBQ_nodes=SBQ_nodes_ave/time_num;
 maxtime=max_time_copy;
 maxnodes=max_nodes_copy;
+
+%newcolors = {'#F00','#ff8c00','#FF0','#0B0','#00F','#00ffff','#000','#0072BD','#A2142F'};
+%colororder(newcolors)
+
+%semilogy(monte_carlo_nodes,monte_carlo_err,'-v','Color','#7E2F8E');
+%hold on
+
+%{
+semilogy(eq_nodes,eqweight,'-o','Color','#00F');
+hold on
+
+semilogy(ls_nodes,line_search,'-+','Color','#ff8c00');
+hold on
+
+semilogy(pmp_nodes,pmp,'-v','Color','#000');
+hold on
+%}
+semilogy(fc_pmp_nodes,fc_pmp,'-o','Color','#0B0');
+hold on
+
+%semilogy(gcos_nodes,gcos,'-+','Color','#00ffff');
+%hold on
+
+
+semilogy(fc_gcos_nodes,fc_gcos,'-v','Color','#cd853f');
+hold on
+
+semilogy(FC_nodes,FC,'-o','Color','#F00');
+hold on
+
+%semilogy(SBQ_nodes,SBQ_err,'-+','Color','#A2142F')
+%hold on
+
+%semilogy(monte_carlo_nodes,order_2,'Color','#A2142F')
+%hold on
+
+%semilogy(linspace(1,maxnodes,maxnodes),order_23,'--','Color','#0B0')
+%hold on
+%semilogy(linspace(1,maxnodes,maxnodes),order_25,'--','Color','#0B0')
+%hold on
+%semilogy(linspace(1,maxnodes,maxnodes),order_exp,'--','Color','#0B0')
+%hold on
+%}
+
+%xlabel('the number of nodes','FontSize',20)
+xlabel('computational time (s)','FontSize',20)
+ylabel('MMD','FontSize',20)
+ 
+hold off
+
+%legend({'Monte carlo','eq-weight','linesearch','PMP','FC-PMP','gcos','FC-gcos','FC','(1/n)^{5/4}'},'FontSize',14,'NumColumns',2)
+%legend({'Monte carlo','eq-weight','linesearch','PMP','FC-PMP','gcos','FC-gcos','FC','SBQ','(1/n)'},'FontSize',14,'NumColumns',2)
+%legend({'Monte carlo','eq-weight','linesearch','PMP','FC-PMP','gcos','FC-gcos','FC','SBQ','(1/n)^{4/3}'},'FontSize',14,'NumColumns',2)
+%legend({'eq-weight','linesearch','PMP','FC-PMP','gcos','FC-gcos','FC','SBQ','exp(-(n)^{1/2})'},'FontSize',14,'NumColumns',2)
+%legend({'eq-weight','linesearch','Away','PCG','SBQ','BPCG','BPCG-lazified'},'FontSize',20,'NumColumns',2)
+%legend({'eq-weight','linesearch','PMP','gcos'},'FontSize',20,'NumColumns',2)
+%legend({'eq-weight','linesearch','PMP','FC-PMP','gcos','FC-gcos','FC','SBQ'},'FontSize',18,'NumColumns',2)
+legend({'FC-PMP','FC-gcos','FC'},'FontSize',20,'NumColumns',2)

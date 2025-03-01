@@ -19,12 +19,13 @@ elseif functype==6
     d_function = @(x,y,epsilon) 8/3 - norm([sin(0.5*pi* (1+x(1)))*cos(pi*(1+x(2))),sin(0.5*pi*(1+x(1)))*sin(pi*(1+x(2))),cos(0.5*pi*(1+x(1)))]-[sin(0.5*pi*(1+y(1)))*cos(pi*(1+y(2))),sin(0.5*pi*(1+y(1)))*sin(pi*(1+y(2))),cos(0.5*pi*(1+y(1)))] );
 else
     'error_arises'
+    return
 end
 
 error_ar=[];
 number_of_points=[];
 
-syms x;
+%syms x;
 
 
 p=zeros(m,dim);%array of nodes

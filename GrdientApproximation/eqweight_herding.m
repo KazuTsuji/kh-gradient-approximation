@@ -26,7 +26,7 @@ end
 error_ar=[];
 number_of_points=[];
 
-syms x;
+%syms x;
 
 
 p=zeros(m,dim);%array of nodes

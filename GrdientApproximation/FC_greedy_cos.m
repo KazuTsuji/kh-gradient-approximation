@@ -26,7 +26,7 @@ else
     'error_arises'
 end
 
-syms x;
+%syms x;
 
 
 %%%
