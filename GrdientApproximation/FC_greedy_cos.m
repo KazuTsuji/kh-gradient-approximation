@@ -309,6 +309,40 @@ while (t < (T+1)) &&(calctime < maxtime)
         stepsize= min([1,(inner_2 / (norm_d_2)^2)*sum(coeff_d)]);
     end
     
+    %stepsize==1の場合
+    if(stepsize > 0.99999999)
+        b=x_t_array- mu;
+        a=find(b==min(b));
+        ind_d_num = [a(1)];
+        p_d = zeros(1,dim);
+        ind_i=zeros(1,dim);
+        number=a(1)-1;        
+        for jj=1:dim;
+            ind_i(jj)=idivide(int64(number),int64(n^(dim-jj)) )+1;
+            p_d(jj)=points(ind_i(jj));
+            number= rem(number,n^(dim-jj));
+        end
+
+        mu_v = mu(ind_d_num(1));%<mu,v>
+        x_t_v = inner_product(c,[1],p,p_d,epsilon,dim,functype); %<x_t,v> 
+        v1 =x_t_norm -mu_x_t - x_t_v  +mu_v ;%<x_t -mu, x_t -v_t>
+        v2 =x_t_norm - 2*x_t_v  +d_function(p_d,p_d,epsilon);%|x_t -v_t|^2
+        stepsize= min([1,(v1/v2)]);
+
+        coeff_d =[1]
+        d_k_norm= d_function(p_d,p_d,epsilon);
+        d_k_x_t = x_t_v  - mu_v;
+        d_k_mu = mu_v;
+        for j=0:n^(dim)-1;
+           indexes=func_index(j,n,dim);
+           points_ar=[];
+            for ll=1:dim;
+                points_ar=[points_ar,points(indexes(ll))];
+            end
+            value=d_function(points_ar,p_d(1,:),epsilon);
+            d_k_array(j+1)= value;
+       end
+    end
     
     c = (1- stepsize)*c  ;
     lenc= length(c);
